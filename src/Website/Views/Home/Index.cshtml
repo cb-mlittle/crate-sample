@@ -1,0 +1,22 @@
+﻿@using CrateSample.Application.Configuration
+@model SharedConfiguration
+
+@{
+    ViewData["Title"] = "Home Page";
+
+    var colors =
+        new Dictionary<bool, string>
+        {
+            { false, "red" },
+            { true, "green" }
+        };
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<div>
+    <h2>DebugEnabled: <strong style="color: @colors[Model.DebugEnabled]">@Model.DebugEnabled</strong></h2>
+</div>
