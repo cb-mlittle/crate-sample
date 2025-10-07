@@ -1,14 +1,14 @@
-﻿@using CrateSample.Application.Configuration
-@model SharedConfiguration
+﻿@model IReadOnlyCollection<CrateSample.Application.Dto.OrderListing>
 
 @{
     ViewData["Title"] = "Home Page";
 
     var colors =
-        new Dictionary<bool, string>
+        new Dictionary<string, string>
         {
-            { false, "red" },
-            { true, "green" }
+            { "completed", "blue" },
+            { "pending", "orange" },
+            { "shipped", "green" }
         };
 }
 
@@ -18,5 +18,20 @@
 </div>
 
 <div>
-    <h2>DebugEnabled: <strong style="color: @colors[Model.DebugEnabled]">@Model.DebugEnabled</strong></h2>
+    @foreach (var customerOrder in @Model)
+    {
+        <ul>
+            <h2>Customer: @customerOrder.Customer?.CustomerFirstName @customerOrder.Customer?.CustomerLastName</h2>
+            @foreach (var order in customerOrder.Orders!)
+            {
+                <li>
+                    <div>Order Number: <strong>@order.OrderNumber</strong></div>
+                    <div>Order Date: <strong>@order.OrderDate.ToShortDateString()</strong></div>
+                    <div>Order Total: $<strong>@order.OrderTotal</strong></div>
+                    <div>Order Status: <strong style="text-transform: capitalize; color: @colors[@order.OrderStatus!]">@order.OrderStatus</strong></div>
+                    <p>&nbsp;</p>
+                </li>
+            }
+        </ul>
+    }
 </div>
