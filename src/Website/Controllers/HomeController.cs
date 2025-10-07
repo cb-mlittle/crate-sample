@@ -1,17 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-
 using CrateSample.Application.Configuration;
 using CrateSample.Application.ServiceAgents.Orders;
 using CrateSample.Application.Services.Configuration;
 using CrateSample.Application.Services.CustomerOrders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
 using Website.Models;
 
 namespace Website.Controllers;
@@ -29,26 +26,56 @@ public class HomeController : Controller
         _configuration = configurationService.Shared();
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index([FromQuery] string? ids)
     {
-        var customerOrders = await _customerOrderService.GetOrderListings();
+        IEnumerable<Guid>? profileIds = null;
 
+        if (!string.IsNullOrWhiteSpace(ids))
+        {
+            var tokens = ids.Split(new[] { ',', ';', ' ', '\r', '\n', '\t' },
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            var unique = new HashSet<Guid>();
+            var errors = new List<string>();
+
+            foreach (var token in tokens)
+            {
+                if (Guid.TryParse(token, out var guid))
+                    unique.Add(guid);
+                else
+                    errors.Add($"Invalid GUID: {token}");
+            }
+
+            if (errors.Count > 0)
+                _logger.LogWarning("ProfileId parse errors: {Errors}", string.Join(", ", errors));
+
+            profileIds = unique.ToList();
+        }
+
+        var customerOrders = await _customerOrderService.GetOrderListings(profileIds);
         return View(customerOrders);
     }
 
-    public IActionResult Privacy()
+    [HttpGet("/home/order/{orderId}")]
+    public async Task<IActionResult> OrderDetails(string orderId)
     {
-        return View();
+        var details = await _customerOrderService.GetOrderDetails(orderId);
+
+        if (details is null || details.Count == 0)
+            return NotFound();
+
+        return View(details);
     }
+
+    public IActionResult Privacy() => View();
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        var model =
-            new ErrorViewModel
-            {
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-            };
+        var model = new ErrorViewModel
+        {
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+        };
 
         return View(model);
     }

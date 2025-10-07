@@ -5,11 +5,14 @@
 
     var colors =
         new Dictionary<string, string>
-        {
+                        {
             { "completed", "blue" },
             { "pending", "orange" },
             { "shipped", "green" }
-        };
+                        };
+
+    // Preserve the current search from the querystring (multiple IDs supported)
+    var ids = Context.Request.Query["ids"].ToString(); // e.g. "guid1, guid2; guid3 \n guid4"
 }
 
 <div class="text-center">
@@ -17,18 +20,64 @@
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 
+<hr />
+
+<!-- Multiple ProfileId search: accepts comma/semicolon/whitespace-separated GUIDs -->
+<form method="get" asp-controller="Home" asp-action="Index" class="row g-3 mb-4">
+    <div class="col-12">
+        <label for="ids" class="form-label">Profile IDs (multiple)</label>
+        <textarea id="ids"
+                  name="ids"
+                  rows="3"
+                  class="form-control"
+                  placeholder="Enter one or more GUIDs separated by commas, semicolons, spaces, or new lines"
+                  autocomplete="off">@ids</textarea>
+        <small class="form-text text-muted">
+            Examples:
+            <code>3f2504e0-4f89-11d3-9a0c-0305e82c3301</code>,
+            <code>e02fd0e4-00fd-090A-ca30-0d00a0038ba0</code>
+            (You can paste many; delimiters: comma, semicolon, whitespace.)
+        </small>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a class="btn btn-secondary" href="@Url.Action("Index","Home")">Reset</a>
+    </div>
+</form>
+
+@if (!string.IsNullOrWhiteSpace(ids))
+{
+    <p class="text-muted">Filtering by ProfileIds: <code>@ids</code></p>
+}
+
 <div>
-    @foreach (var customerOrder in @Model)
+    @foreach (var customerOrder in Model)
     {
         <ul>
             <h2>Customer: @customerOrder.Customer?.CustomerFirstName @customerOrder.Customer?.CustomerLastName</h2>
             @foreach (var order in customerOrder.Orders!)
             {
                 <li>
-                    <div>Order Number: <strong>@order.OrderNumber</strong></div>
+                    <div>
+                        Order Number:
+                        <strong>
+                            <a asp-controller="Home"
+                               asp-action="OrderDetails"
+                               asp-route-orderId="@order.OrderNumber">
+                                @order.OrderNumber
+                            </a>
+                        </strong>
+                    </div>
                     <div>Order Date: <strong>@order.OrderDate.ToShortDateString()</strong></div>
                     <div>Order Total: $<strong>@order.OrderTotal</strong></div>
-                    <div>Order Status: <strong style="text-transform: capitalize; color: @colors[@order.OrderStatus!]">@order.OrderStatus</strong></div>
+                    <div>
+                        @{
+                            var statusKey = order.OrderStatus?.ToLowerInvariant() ?? "";
+                            var color = colors.ContainsKey(statusKey) ? colors[statusKey] : "gray";
+                        }
+                        Order Status:
+                        <strong style="text-transform: capitalize; color: @color">@order.OrderStatus</strong>
+                    </div>
                     <p>&nbsp;</p>
                 </li>
             }
