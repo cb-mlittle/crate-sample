@@ -10,6 +10,7 @@ using CrateSample.Application.Services.CustomerOrders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Website.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Website.Controllers;
 
@@ -29,6 +30,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Index([FromQuery] string? ids)
     {
         IEnumerable<Guid>? profileIds = null;
+        var errors = new List<string>();
 
         if (!string.IsNullOrWhiteSpace(ids))
         {
@@ -36,7 +38,6 @@ public class HomeController : Controller
                 StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             var unique = new HashSet<Guid>();
-            var errors = new List<string>();
 
             foreach (var token in tokens)
             {
@@ -53,6 +54,9 @@ public class HomeController : Controller
         }
 
         var customerOrders = await _customerOrderService.GetOrderListings(profileIds);
+
+        ViewBag.Errors = errors;
+
         return View(customerOrders);
     }
 
