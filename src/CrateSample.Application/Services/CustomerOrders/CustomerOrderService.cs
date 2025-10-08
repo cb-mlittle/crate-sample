@@ -22,62 +22,18 @@ internal class CustomerOrderService : ICustomerOrderService
         _customerOrderFactory = customerOrderFactory;
     }
 
-    public async Task<IReadOnlyCollection<OrderListing>> GetOrderListings() =>
-        await GetOrderListings(profileIds: null).ConfigureAwait(false);
+    public Task<IReadOnlyCollection<OrderListing>> GetOrderListings() =>
+        GetOrderListings(profileIds: null);
 
-    public async Task<IReadOnlyCollection<OrderListing>> GetOrderListings(IEnumerable<Guid>? profileIds)
+    public Task<IReadOnlyCollection<OrderListing>> GetOrderListings(IEnumerable<Guid>? profileIds)
     {
-        var orderData = await GetOrderData(profileIds).ConfigureAwait(false);
-        return orderData
-            .Select(item => _customerOrderFactory.BuildListing(item.customer, item.orders))
-            .ToList();
+        IReadOnlyCollection<OrderListing> empty = Array.Empty<OrderListing>();
+        return Task.FromResult(empty);
     }
 
-    public async Task<IReadOnlyCollection<OrderDetail>> GetOrderDetails(string orderId)
+    public Task<IReadOnlyCollection<OrderDetail>> GetOrderDetails(string orderId)
     {
-        var orderData = await GetOrderData().ConfigureAwait(false);
-        var order = orderData.SelectMany(item => item.orders)
-            .SingleOrDefault(o => o.OrderId == orderId)
-            ?? throw new ApplicationException($"Order ID: {orderId} not found");
-
-        return orderData
-            .Select(item => _customerOrderFactory.BuildDetail(item.customer, order))
-            .DistinctBy(d => d.Info?.OrderNumber)
-            .ToList();
-    }
-
-    private async Task<IReadOnlyCollection<(Customer customer, IEnumerable<Order> orders)>> GetOrderData(IEnumerable<Guid>? profileIds = null)
-    {
-        var customerData = await _customerServiceAgent.GetCustomersAsync().ConfigureAwait(false);
-        var orderData = await _orderServiceAgent.GetOrdersAsync().ConfigureAwait(false);
-
-        HashSet<Guid>? filter = null;
-        if (profileIds != null)
-        {
-            var list = profileIds as ICollection<Guid> ?? profileIds.ToList();
-            if (list.Count > 0)
-                filter = new HashSet<Guid>(list);
-        }
-
-        if (filter is not null)
-        {
-            customerData = customerData
-                .Where(c => filter.Contains(c.CustomerId))
-                .ToList();
-
-            orderData = orderData
-                .Where(o => filter.Contains(o.CustomerId))
-                .ToList();
-        }
-
-        var customerOrders = customerData
-            .GroupJoin(
-                orderData,
-                customer => customer.CustomerId,
-                order => order.CustomerId,
-                (customer, orders) => (customer, orders))
-            .ToList();
-
-        return customerOrders;
+        IReadOnlyCollection<OrderDetail> empty = Array.Empty<OrderDetail>();
+        return Task.FromResult(empty);
     }
 }
