@@ -1,16 +1,14 @@
+using CrateSample.Application.Configuration;
+using CrateSample.Application.Services.Configuration;
+using CrateSample.Application.Services.CustomerOrders;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using CrateSample.Application.Configuration;
-using CrateSample.Application.ServiceAgents.Orders;
-using CrateSample.Application.Services.Configuration;
-using CrateSample.Application.Services.CustomerOrders;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Website.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Website.Controllers;
 
@@ -58,17 +56,6 @@ public class HomeController : Controller
         ViewBag.Errors = errors;
 
         return View(customerOrders);
-    }
-
-    [HttpGet("/home/order/{orderId}")]
-    public async Task<IActionResult> OrderDetails(string orderId)
-    {
-        var details = await _customerOrderService.GetOrderDetails(orderId);
-
-        if (details is null || details.Count == 0)
-            return NotFound();
-
-        return View(details);
     }
 
     public IActionResult Privacy() => View();
