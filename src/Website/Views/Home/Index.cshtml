@@ -2,38 +2,9 @@
 
 @{
     ViewData["Title"] = "Home Page";
-    var ids = Context.Request.Query["ids"].ToString();
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <p>This page will eventually display order search results.</p>
 </div>
-
-<hr />
-
-<form method="get" asp-controller="Home" asp-action="Index" class="row g-3 mb-4">
-    <div class="col-12">
-        <label for="ids" class="form-label">Profile IDs (multiple)</label>
-        <textarea id="ids"
-                  name="ids"
-                  rows="3"
-                  class="form-control"
-                  placeholder="Enter one or more GUIDs separated by commas, semicolons, spaces, or new lines"
-                  autocomplete="off">@ids</textarea>
-        <small class="form-text text-muted">
-            Examples:
-            <code>3f2504e0-4f89-11d3-9a0c-0305e82c3301</code>,
-            <code>e02fd0e4-00fd-090A-ca30-0d00a0038ba0</code>
-        </small>
-    </div>
-    <div class="col-12">
-        <button type="submit" class="btn btn-primary">Search</button>
-        <a class="btn btn-secondary" href="@Url.Action("Index","Home")">Reset</a>
-    </div>
-</form>
-
-@if (!string.IsNullOrWhiteSpace(ids))
-{
-    <p class="text-muted">Filtering by ProfileIds: <code>@ids</code></p>
-}
