@@ -37,7 +37,6 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddOrders(this IServiceCollection services)
     {
         services.AddHttpClient<IOrderClient, OrderClient>();
-        services.AddTransient<IOrderServiceAgent, OrderServiceAgent>();
 
         return services;
     }

@@ -7,7 +7,6 @@ public class Order
     [JsonPropertyName("order_id")]
     public string? OrderId { get; set; }
 
-    [JsonPropertyName("customer_id")]
     public Guid CustomerId { get; set; }
 
     [JsonPropertyName("items")]
