@@ -13,6 +13,7 @@
 
     // Preserve the current search from the querystring (multiple IDs supported)
     var ids = Context.Request.Query["ids"].ToString(); // e.g. "guid1, guid2; guid3 \n guid4"
+    var errors = ViewBag.Errors as List<string>;
 }
 
 <div class="text-center">
@@ -21,6 +22,19 @@
 </div>
 
 <hr />
+
+@if (errors is not null && errors.Any())
+{
+    <div class="alert alert-danger">
+        <strong>Invalid IDs detected:</strong>
+        <ul class="mb-0">
+            @foreach (var err in errors)
+            {
+                <li>@err</li>
+            }
+        </ul>
+    </div>
+}
 
 <!-- Multiple ProfileId search: accepts comma/semicolon/whitespace-separated GUIDs -->
 <form method="get" asp-controller="Home" asp-action="Index" class="row g-3 mb-4">
