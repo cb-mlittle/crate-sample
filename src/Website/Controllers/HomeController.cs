@@ -56,17 +56,6 @@ public class HomeController : Controller
         return View(customerOrders);
     }
 
-    [HttpGet("/home/order/{orderId}")]
-    public async Task<IActionResult> OrderDetails(string orderId)
-    {
-        var details = await _customerOrderService.GetOrderDetails(orderId);
-
-        if (details is null || details.Count == 0)
-            return NotFound();
-
-        return View(details);
-    }
-
     public IActionResult Privacy() => View();
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
