@@ -1,14 +1,13 @@
+using CrateSample.Application.Configuration;
+using CrateSample.Application.Services.Configuration;
+using CrateSample.Application.Services.CustomerOrders;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using CrateSample.Application.Configuration;
-using CrateSample.Application.ServiceAgents.Orders;
-using CrateSample.Application.Services.Configuration;
-using CrateSample.Application.Services.CustomerOrders;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Website.Models;
 
 namespace Website.Controllers;
