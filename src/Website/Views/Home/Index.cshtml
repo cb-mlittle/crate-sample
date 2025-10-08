@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Home Page";
     var ids = Context.Request.Query["ids"].ToString();
+    var errors = ViewBag.Errors as List<string>;
 }
 
 <div class="text-center">
@@ -11,6 +12,19 @@
 </div>
 
 <hr />
+
+@if (errors is not null && errors.Any())
+{
+    <div class="alert alert-danger">
+        <strong>Invalid IDs detected:</strong>
+        <ul class="mb-0">
+            @foreach (var err in errors)
+            {
+                <li>@err</li>
+            }
+        </ul>
+    </div>
+}
 
 <form method="get" asp-controller="Home" asp-action="Index" class="row g-3 mb-4">
     <div class="col-12">
