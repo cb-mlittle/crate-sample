@@ -4,8 +4,8 @@ namespace CrateSample.Domain.Entities;
 
 public class Customer
 {
-    [JsonPropertyName("customer_id")]
-    public Guid CustomerId { get; set; }
+    [JsonPropertyName("profile_id")]
+    public Guid ProfileId { get; set; }
 
     [JsonPropertyName("first_name")]
     public string? FirstName { get; set; }
