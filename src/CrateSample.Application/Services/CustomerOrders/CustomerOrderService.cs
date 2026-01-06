@@ -51,26 +51,8 @@ internal class CustomerOrderService : ICustomerOrderService
         var customerData = await _customerServiceAgent.GetCustomersAsync().ConfigureAwait(false);
         var orderData = await _orderServiceAgent.GetOrdersAsync().ConfigureAwait(false);
 
-        HashSet<Guid>? filter = null;
-        if (profileIds != null)
-        {
-            var list = profileIds as ICollection<Guid> ?? profileIds.ToList();
-            if (list.Count > 0)
-                filter = new HashSet<Guid>(list);
-        }
-
-        if (filter is not null)
-        {
-            customerData = customerData
-                .Where(c => filter.Contains(c.ProfileId))
-                .ToList();
-
-            orderData = orderData
-                .Where(o => filter.Contains(o.ProfileId))
-                .ToList();
-        }
-
         var customerOrders = customerData
+            .Where(item => profileIds?.Contains(item.ProfileId) ?? true)
             .GroupJoin(
                 orderData,
                 customer => customer.ProfileId,
