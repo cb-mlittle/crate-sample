@@ -62,19 +62,19 @@ internal class CustomerOrderService : ICustomerOrderService
         if (filter is not null)
         {
             customerData = customerData
-                .Where(c => filter.Contains(c.CustomerId))
+                .Where(c => filter.Contains(c.ProfileId))
                 .ToList();
 
             orderData = orderData
-                .Where(o => filter.Contains(o.CustomerId))
+                .Where(o => filter.Contains(o.ProfileId))
                 .ToList();
         }
 
         var customerOrders = customerData
             .GroupJoin(
                 orderData,
-                customer => customer.CustomerId,
-                order => order.CustomerId,
+                customer => customer.ProfileId,
+                order => order.ProfileId,
                 (customer, orders) => (customer, orders))
             .ToList();
 
